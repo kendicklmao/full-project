@@ -1,0 +1,586 @@
+/* =========================================================
+   PROJECT.CSS
+   Rules not (yet) part of the global design system in
+   src/assets/style/*. Loaded LAST in the bundle, so equal-specificity
+   rules here override the global files on every page.
+
+   UI/UX upgrade Phase A (2026-10-06): 192 selectors that duplicated the
+   global CSS were merged into style/layouts/components.css (verified by
+   computed-style diff = 0). What remains:
+   - project/page specific rules
+   - .btn* / .avatar* families: they still override global variants and
+     components.css rules through cascade order (moving them changes
+     rendering — see UI_UX_UPGRADE_MASTER.md, Known Issues)
+   ========================================================= */
+
+/* =========================
+   STAT CARD (Dashboard)
+   ========================================================= */
+.panel-row:last-child {
+    border-bottom: none;
+}
+
+/* =========================
+   DONUT CHART (SVG đơn giản)
+   ========================================================= */
+.donut-chart-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+/* =========================
+   PROJECT CARD (trang Projects)
+   ========================================================= */
+
+.project-card-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.project-card-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-1);
+}
+
+/* =========================
+   TASK CARD (thẻ công việc trong Kanban)
+   ========================================================= */
+
+.due-overdue { color: var(--color-danger); }
+.due-today { color: var(--color-warning); }
+
+/* =========================
+   FILTER BAR
+   ========================================================= */
+
+.filter-bar .input-icon-wrap {
+    width: 220px;
+    flex-shrink: 0;
+}
+
+.filter-bar .select {
+    width: auto;
+    min-width: 140px;
+    flex-shrink: 0;
+}
+
+.filter-bar .btn-primary {
+    margin-left: auto; /* Đẩy nút "+ Thêm task" về góc phải */
+    flex-shrink: 0;
+}
+
+/* =========================
+   TASK LIST ROW (dạng bảng danh sách task)
+   ========================================================= */
+.task-list {
+    overflow: hidden;
+}
+
+.task-list-row-header {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--color-text-subtle);
+    font-weight: 600;
+    background-color: var(--color-surface-hover);
+}
+.task-list-row-header:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.task-title-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.task-title-cell-project {
+    font-size: 11.5px;
+    color: var(--color-text-subtle);
+}
+
+/* =========================
+   DROPDOWN
+   ========================================================= */
+.dropdown-item.danger {
+    color: var(--color-danger);
+}
+
+/* =========================
+   ACTIVITY TIMELINE
+   ========================================================= */
+.timeline-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 13px;
+    top: 28px;
+    bottom: 0;
+    width: 1px;
+    background-color: var(--color-border);
+}
+
+/* =========================
+   COMMENTS / CHECKLIST (Task Drawer)
+   ========================================================= */
+.comment-bubble {
+    background-color: var(--color-surface-hover);
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3);
+    font-size: 12.5px;
+}
+
+/* =========================
+   TOAST (thông báo góc phải dưới)
+   ========================================================= */
+.toast-success { border-left: 3px solid var(--color-success); }
+.toast-danger { border-left: 3px solid var(--color-danger); }
+.toast-info { border-left: 3px solid var(--color-info); }
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================
+   SKELETON (trạng thái loading)
+   ========================================================= */
+.skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.6), transparent);
+    animation: skeleton-sweep 1.3s infinite;
+}
+@keyframes skeleton-sweep {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+}
+
+/* =========================
+   2. RESET CƠ BẢN
+   Trình duyệt có style mặc định khác nhau cho từng thẻ,
+   reset để chúng ta chủ động kiểm soát giao diện.
+   ========================================================= */
+
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+/* =========================
+   4. BUTTON
+   Class dùng chung: .btn
+   Thêm biến thể: .btn-primary, .btn-secondary, .btn-outline, .btn-ghost, .btn-danger
+   Thêm kích thước: .btn-sm, .btn-lg
+   ========================================================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    height: 36px;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color .15s ease, border-color .15s ease;
+}
+
+.btn-primary {
+    background-color: var(--color-primary-600);
+    color: var(--color-on-primary);
+}
+.btn-primary:hover {
+    background-color: var(--color-primary-700);
+}
+
+.btn-secondary {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text);
+}
+.btn-secondary:hover {
+    background-color: var(--color-border);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-text);
+}
+.btn-outline:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.btn-ghost {
+    background-color: transparent;
+    color: var(--color-text-muted);
+}
+.btn-ghost:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: var(--color-on-primary);
+}
+.btn-danger:hover {
+    background-color: #b91c1c;
+}
+
+.btn-sm {
+    height: 30px;
+    padding: 0 var(--space-3);
+    font-size: 12.5px;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+}
+.btn-icon:hover {
+    background-color: var(--color-surface-hover);
+}
+
+/* Badge độ ưu tiên task */
+.badge-priority-urgent { background: var(--color-priority-urgent-bg); color: var(--color-priority-urgent); }
+.badge-priority-high { background: var(--color-priority-high-bg); color: var(--color-priority-high); }
+.badge-priority-medium { background: var(--color-priority-medium-bg); color: var(--color-priority-medium); }
+.badge-priority-low { background: var(--color-priority-low-bg); color: var(--color-priority-low); }
+
+/* =========================
+   6. AVATAR
+   Hình đại diện dạng vòng tròn hiển thị chữ viết tắt tên.
+   Màu nền được set bằng inline style (style="background:#..") trong HTML.
+   ========================================================= */
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: var(--color-on-primary);
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+/* KI-12: .avatar above (32px, loaded after style.css) used to override style.css's .avatar-xs,
+   so every .avatar-xs rendered at 32px. Restate it inside this family. */
+.avatar-xs {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+}
+.avatar-sm {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+}
+.avatar-lg {
+    width: 44px;
+    height: 44px;
+    font-size: 15px;
+}
+
+/* Nhóm avatar xếp chồng lên nhau */
+.avatar-group {
+    display: flex;
+}
+.avatar-group .avatar {
+    border: 2px solid var(--color-surface);
+    margin-left: -8px;
+}
+.avatar-group .avatar:first-child {
+    margin-left: 0;
+}
+
+/* =========================
+   7. FORM (input, textarea, select, checkbox, label)
+   ========================================================= */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.form-hint {
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+/* Input có icon bên trong (dùng cho ô tìm kiếm) */
+.input-icon-wrap .input-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-subtle);
+    width: 16px;
+    height: 16px;
+}
+
+/* ============ KANBAN SCROLLBARS (layout lives in components.css) ============ */
+
+/* Tùy chỉnh thanh cuộn ngang mượt đẹp */
+.board.scroll-x::-webkit-scrollbar {
+    height: 8px;
+}
+.board.scroll-x::-webkit-scrollbar-track {
+    background: var(--color-surface-hover);
+    border-radius: 4px;
+}
+.board.scroll-x::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: 4px;
+}
+.board.scroll-x::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-subtle);
+}
+
+/* Tùy chỉnh thanh cuộn dọc bên trong cột */
+.board-column-body::-webkit-scrollbar {
+    width: 6px;
+}
+.board-column-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+.board-column-body::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: 3px;
+}
+.board-column-body::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-subtle);
+}
+
+/* Các lớp màu tương ứng với % */
+.progress-bar-fill.low {
+    background-color: #f59e0b; /* Cam đậm cho tiến độ thấp (< 30%) */
+}
+
+.progress-bar-fill.medium {
+    background-color: #3b82f6; /* Xanh dương cho tiến độ trung bình (30% - 79%) */
+}
+
+.progress-bar-fill.high {
+    background-color: #10b981; /* Xanh lá đậm cho tiến độ cao/hoàn thành (>= 80%) */
+}
+
+.auth-wrap.size-lg {
+    max-width: 440px;
+        margin-top: 138px;
+}
+.auth-wrap {
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+}
+.auth-card {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    box-shadow: var(--shadow-sm);
+}
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+}
+.auth-brand-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+.auth-wrap { width: 100%; max-width: 400px; }
+.auth-wrap.size-lg { max-width: 440px; }
+.auth-brand-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+.auth-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-xl);
+  background-color: var(--color-primary-600);
+  color: var(--color-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.auth-card {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+.auth-card .field { margin-bottom: 0; }
+
+.social-row { display: flex; gap: var(--space-2); }
+.social-btn { flex: 1; }
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 12px;
+  color: var(--color-text-subtle);
+}
+.auth-divider span { flex: 1; height: 1px; background-color: var(--color-border); }
+
+.password-field-wrap { position: relative; }
+.password-field-wrap .input { padding-right: 40px; }
+.password-toggle-btn { position: absolute; right: 4px; top: 4px; }
+
+.field-checkbox-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); }
+.checkbox-label { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; }
+.checkbox-label .checkbox { margin-top: 2px; }
+
+.auth-inline-link { color: var(--color-primary-600); font-weight: 500; }
+.auth-inline-link:hover { text-decoration: underline; }
+
+.auth-footer-text { margin-top: var(--space-4); text-align: center; font-size: 14px; color: var(--color-text-muted); }
+
+.auth-demo-block { margin-top: var(--space-6); }
+.auth-demo-label {
+  text-align: center;
+  margin-bottom: var(--space-2);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--color-text-subtle);
+}
+.auth-demo-list { display: flex; flex-direction: column; gap: 8px; }
+.auth-demo-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px var(--space-3);
+  text-align: left;
+}
+.auth-demo-row-name { display: block; font-size: 14px; font-weight: 500; }
+.auth-demo-row-role { display: block; font-size: 12px; color: var(--color-text-muted); }
+
+.task-card-desc-block {
+    margin-top: 8px;
+}
+ 
+/* Pill label, same style family as the "Medium" priority tag */
+.task-card-desc-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #eef2ff;
+    color: #4338ca;
+}
+ 
+.task-card-desc-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #6366f1;
+}
+ 
+/* The tinted box is the row: text + "Read more" share one line */
+.task-card-desc-row {
+    display: flex;
+    align-items: baseline;
+    /* gap: 6px; */
+    padding: 6px 8px;
+    border-radius: 6px;
+    /* border-left: 3px solid #a5b4fc; */
+    /* background: #f5f7ff; */
+}
+ 
+.task-card-desc-row.is-open {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+ 
+.task-card-desc {
+    margin: 0;
+    min-width: 0;            /* lets the text shrink so the button stays next to the "..." */
+    flex: 0 1 auto;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #334155;
+    /* collapsed: one line with ellipsis */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+ 
+.task-card-desc.is-open {
+    white-space: pre-wrap;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+}
+ 
+/* Read more / Show less: compact colored link right after the "..." */
+.task-card-desc-toggle {
+    flex: 0 0 auto;
+    padding: -1px 8px;
+    border: 0;
+    border-radius: 999px;
+    /* background: #e0e7ff; */
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 18px;
+    color: #3730a3;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+ 
+/* .task-card-desc-toggle:hover {
+    background: #c7d2fe;
+} */
