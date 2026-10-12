@@ -1,8 +1,7 @@
 // Forgot-password OTP flow. Dependencies are injected so the rules can be tested without MongoDB or SMTP.
 const bcrypt = require('bcryptjs');
-const { generateOtp, hashOtp, verifyOtpHash } = require('./otp');
+const { OTP_TTL_MS, generateOtp, hashOtp, verifyOtpHash } = require('./otp');
 
-const OTP_TTL_MS = 10 * 60 * 1000;
 const RESEND_COOLDOWN_MS = 60 * 1000;
 const MAX_SENDS_PER_HOUR = 5;
 const MAX_ATTEMPTS = 5;
@@ -14,12 +13,20 @@ const INVALID_CODE_MESSAGE = 'The verification code is invalid or has expired.';
 const normalizeEmail = (email) => (typeof email === 'string' ? email.trim().toLowerCase() : '');
 const isEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+// Use the injected secret, otherwise fall back to the environment, and fail loudly if there is none.
+const resolveSecret = (deps) => {
+    const secret = deps.secret || process.env.OTP_SECRET || process.env.JWT_SECRET;
+    if (!secret) throw new Error('OTP_SECRET or JWT_SECRET is not set');
+    return secret;
+};
+
 /**
  * Step 1. Answers the same way whether the account exists or not (no account enumeration).
  * Returns { status, body }. Only a missing mail configuration is reported differently (it says nothing about the account).
  */
 async function requestOtp({ email: rawEmail }, deps) {
-    const { User, PasswordReset, sendMail, isMailConfigured, secret, now = () => new Date() } = deps;
+    const { User, PasswordReset, sendMail, isMailConfigured, now = () => new Date() } = deps;
+    const secret = resolveSecret(deps);
     const email = normalizeEmail(rawEmail);
     if (!isEmail(email)) return { status: 400, body: { message: 'Please enter a valid email address.' } };
     if (!isMailConfigured()) return { status: 503, body: { message: 'Email service is not configured. Please contact the administrator.' } };
@@ -42,16 +49,17 @@ async function requestOtp({ email: rawEmail }, deps) {
     }
 
     const otp = generateOtp();
+    const expiresAtMs = time.getTime() + OTP_TTL_MS; // the same value is bound into the hash and stored in the DB
     await PasswordReset.findOneAndUpdate(
         { email },
-        { email, otpHash: hashOtp(email, otp, secret), expiresAt: new Date(time.getTime() + OTP_TTL_MS), attempts: 0, lastSentAt: time, windowStart, sendCount },
+        { email, otpHash: hashOtp(email, otp, expiresAtMs, secret), expiresAt: new Date(expiresAtMs), attempts: 0, lastSentAt: time, windowStart, sendCount },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     );
     try {
         await sendMail({
             to: email,
             subject: 'Your TeamFlow password reset code',
-            text: `Your verification code is ${otp}. It expires in ${OTP_TTL_MS / 60000} minutes. If you did not request it, ignore this email.`,
+            text: `Your verification code is ${otp}. It expires in ${Math.round(OTP_TTL_MS / 1000)} seconds. If you did not request it, ignore this email.`,
         });
     } catch (err) {
         // the code could not be delivered: drop it so the user can retry immediately
@@ -65,7 +73,8 @@ async function requestOtp({ email: rawEmail }, deps) {
 
 /** Step 2. Checks the code (expiry, attempts, single use) and sets the new password. */
 async function verifyOtpAndReset({ email: rawEmail, otp, newPassword }, deps) {
-    const { User, PasswordReset, secret, now = () => new Date() } = deps;
+    const { User, PasswordReset, now = () => new Date() } = deps;
+    const secret = resolveSecret(deps);
     const email = normalizeEmail(rawEmail);
     if (!isEmail(email) || typeof otp !== 'string' || typeof newPassword !== 'string') {
         return { status: 400, body: { message: 'Email, code and new password are required.' } };
@@ -84,7 +93,7 @@ async function verifyOtpAndReset({ email: rawEmail, otp, newPassword }, deps) {
         await PasswordReset.deleteOne({ email });
         return { status: 429, body: { message: 'Too many attempts. Please request a new code.' } };
     }
-    if (!verifyOtpHash(email, otp, record.otpHash, secret)) {
+    if (!verifyOtpHash(email, otp, new Date(record.expiresAt).getTime(), record.otpHash, secret)) {
         await PasswordReset.updateOne({ email }, { $inc: { attempts: 1 } });
         return invalid;
     }

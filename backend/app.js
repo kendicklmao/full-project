@@ -3,6 +3,8 @@ const app = express();
 const cors = require("cors");
 const session = require("express-session");
 
+require('dotenv').config();
+
 const allowedOrigins = [
   "http://localhost:5180",
   "http://localhost:5179",

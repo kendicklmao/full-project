@@ -339,20 +339,19 @@ exports.CheckEmail = async (req, res) => {
 exports.resetPassword = (req, res) =>
     res.status(410).json({ message: 'This endpoint was removed. Use POST /api/user/forgot-password/request and /verify.' });
 
-const passwordDeps = () => ({
-    User,
-    PasswordReset: require('./../model/passwordReset'),
-    sendMail: mailer.sendMail,
-    isMailConfigured: mailer.isMailConfigured,
-    secret: process.env.OTP_SECRET || JWT_SECRET,
-});
+const passwordDeps = () => {
+    const secret = process.env.OTP_SECRET || process.env.JWT_SECRET;
+    console.log('passwordDeps secret type:', typeof secret);   // phải ra "string"
+    if (!secret) throw new Error('OTP_SECRET or JWT_SECRET is not set');
+    return { User, PasswordReset: require('./../model/passwordReset'), sendMail: mailer.sendMail, isMailConfigured: mailer.isMailConfigured, secret };
+};
 
 exports.requestPasswordOtp = async (req, res) => {
     try {
         const result = await passwordReset.requestOtp(req.body || {}, passwordDeps());
         return res.status(result.status).json(result.body);
     } catch (err) {
-        console.error('requestPasswordOtp failed:', err.message);
+        console.error('requestPasswordOtp failed:', err.stack);
         return res.status(502).json({ message: 'The verification email could not be sent. Please try again later.' });
     }
 };
