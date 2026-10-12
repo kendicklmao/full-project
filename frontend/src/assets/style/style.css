@@ -177,6 +177,47 @@
   --z-toast: 1100;
 }
 
+/* Dark Mode Theme */
+  [data-theme="dark"] {
+    /* Neutral colors cho dark mode */
+    --color-bg: #0f172a;               /* Nền chính tối */
+    --color-surface: #1e293b;          /* Nền card, header, sidebar */
+    --color-surface-hover: #334155;    /* Hover */
+    --color-border: #334155;           /* Đường viền */
+    --color-border-strong: #475569;    /* Viền đậm */
+    --color-text: #f8fafc;             /* Chữ chính */
+    --color-text-muted: #94a3b8;       /* Chữ phụ */
+    --color-text-subtle: #64748b;      /* Chữ mờ */
+
+    --color-slate-100: #1e293b;
+    --color-slate-200: #334155;
+    --color-slate-700: #cbd5e1;
+    --color-slate-900: #f8fafc;
+
+    --color-surface-sunken: #0f172a;   /* Cột Kanban board */
+    --color-overlay: rgba(0, 0, 0, 0.7);
+
+    /* Primary tint dịu mắt hơn trên nền tối */
+    --color-primary-50: #1e1b4b;
+    --color-primary-100: #312e81;
+
+    /* Nền cho các thông báo / trạng thái (dùng tone tối dịu hơn) */
+    --color-success-bg: rgba(22, 163, 74, 0.15);
+    --color-warning-bg: rgba(245, 158, 11, 0.15);
+    --color-danger-bg: rgba(220, 38, 38, 0.15);
+    --color-info-bg: rgba(37, 99, 235, 0.15);
+
+    /* Nền cho độ ưu tiên task */
+    --color-priority-urgent-bg: rgba(220, 38, 38, 0.2);
+    --color-priority-high-bg: rgba(249, 115, 22, 0.2);
+    --color-priority-medium-bg: rgba(245, 158, 11, 0.2);
+    --color-priority-low-bg: rgba(37, 99, 235, 0.2);
+
+    /* Chữ tương phản cho nhãn độ ưu tiên */
+    --color-priority-high-text: #fb923c;
+    --color-priority-medium-text: #fcd34d;
+  }
+
 /* =========================
    2. RESET
    ========================================================= */
@@ -633,4 +674,75 @@ svg.icon.icon-xl { width: 24px; height: 24px; }
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* =========================================================
+   DARK MODE OVERRIDES FOR PROJECT PAGES & KANBAN
+   ========================================================= */
+[data-theme="dark"] .portfolio-matrix-wrapper,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .project-card,
+[data-theme="dark"] .task-card,
+[data-theme="dark"] .modal-box,
+[data-theme="dark"] .drawer-panel,
+[data-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .combobox-list,
+[data-theme="dark"] .chart-card,
+[data-theme="dark"] .calendar-card,
+[data-theme="dark"] .backlog-table-wrap,
+[data-theme="dark"] .timeline-card,
+[data-theme="dark"] .timeline-line-card,
+[data-theme="dark"] .portfolio-cell,
+[data-theme="dark"] .project-header {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+/* Sửa chữ bị chìm/đen cứng trong matrix & cards */
+[data-theme="dark"] .portfolio-cell,
+[data-theme="dark"] .portfolio-title-sub,
+[data-theme="dark"] .portfolio-text,
+[data-theme="dark"] .portfolio-list {
+  color: var(--color-text) !important;
+}
+
+/* Sửa cột Kanban Board & background chìm */
+[data-theme="dark"] .board-column,
+[data-theme="dark"] .calendar-cell.is-outside,
+[data-theme="dark"] .timeline-head,
+[data-theme="dark"] .stagnation-table th {
+  background-color: var(--color-surface-sunken) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+/* Sửa các ô Input, Select, Textarea và ô Search bị trắng trong Drawer/Modal */
+[data-theme="dark"] .input,
+[data-theme="dark"] .textarea,
+[data-theme="dark"] .select,
+[data-theme="dark"] .header-search,
+[data-theme="dark"] .add-task-form,
+[data-theme="dark"] .add-task-btn:hover {
+  background-color: var(--color-surface-sunken) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border-strong) !important;
+}
+
+/* Fix sticky task titles trong Timeline */
+[data-theme="dark"] .timeline-task-cell {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
+/* Fix đường gạch ngang các hàng trong bảng */
+[data-theme="dark"] .portfolio-matrix-row,
+[data-theme="dark"] .panel-row,
+[data-theme="dark"] .task-list-row,
+[data-theme="dark"] .member-row,
+[data-theme="dark"] .admin-user-row,
+[data-theme="dark"] .stagnation-table td,
+[data-theme="dark"] .workload-table td,
+[data-theme="dark"] .workload-table th {
+  border-color: var(--color-border) !important;
 }

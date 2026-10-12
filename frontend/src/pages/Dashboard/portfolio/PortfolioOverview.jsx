@@ -24,9 +24,6 @@ function PortfolioOverview({ state, reload }) {
 
     const header = !state.loading && !state.error && (
         <div className="analytics-header analytics-header--end">
-            <button type="button" className="btn btn-ghost btn-sm" onClick={reload}>
-                <RotateCw className="icon icon-sm" aria-hidden="true" /> Refresh
-            </button>
         </div>
     );
 

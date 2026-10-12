@@ -2071,3 +2071,74 @@ span.progress-bar-fill { display: block; }
 .timeline-line-item-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .timeline-line-item-name { font-weight: 500; overflow-wrap: anywhere; }
 .timeline-line-item-date { font-size: var(--text-xs); color: var(--color-text-muted); }
+
+/* =========================================================
+   DARK MODE OVERRIDES FOR PROJECT PAGES & KANBAN
+   ========================================================= */
+[data-theme="dark"] .portfolio-matrix-wrapper,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .project-card,
+[data-theme="dark"] .task-card,
+[data-theme="dark"] .modal-box,
+[data-theme="dark"] .drawer-panel,
+[data-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .combobox-list,
+[data-theme="dark"] .chart-card,
+[data-theme="dark"] .calendar-card,
+[data-theme="dark"] .backlog-table-wrap,
+[data-theme="dark"] .timeline-card,
+[data-theme="dark"] .timeline-line-card,
+[data-theme="dark"] .portfolio-cell,
+[data-theme="dark"] .project-header {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+/* Sửa chữ bị chìm/đen cứng trong matrix & cards */
+[data-theme="dark"] .portfolio-cell,
+[data-theme="dark"] .portfolio-title-sub,
+[data-theme="dark"] .portfolio-text,
+[data-theme="dark"] .portfolio-list {
+  color: var(--color-text) !important;
+}
+
+/* Sửa cột Kanban Board & background chìm */
+[data-theme="dark"] .board-column,
+[data-theme="dark"] .calendar-cell.is-outside,
+[data-theme="dark"] .timeline-head,
+[data-theme="dark"] .stagnation-table th {
+  background-color: var(--color-surface-sunken) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+/* Sửa các ô Input, Select, Textarea và ô Search bị trắng trong Drawer/Modal */
+[data-theme="dark"] .input,
+[data-theme="dark"] .textarea,
+[data-theme="dark"] .select,
+[data-theme="dark"] .header-search,
+[data-theme="dark"] .add-task-form,
+[data-theme="dark"] .add-task-btn:hover {
+  background-color: var(--color-surface-sunken) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border-strong) !important;
+}
+
+/* Fix sticky task titles trong Timeline */
+[data-theme="dark"] .timeline-task-cell {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
+/* Fix đường gạch ngang các hàng trong bảng */
+[data-theme="dark"] .portfolio-matrix-row,
+[data-theme="dark"] .panel-row,
+[data-theme="dark"] .task-list-row,
+[data-theme="dark"] .member-row,
+[data-theme="dark"] .admin-user-row,
+[data-theme="dark"] .stagnation-table td,
+[data-theme="dark"] .workload-table td,
+[data-theme="dark"] .workload-table th {
+  border-color: var(--color-border) !important;
+}

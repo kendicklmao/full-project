@@ -584,3 +584,375 @@ svg {
 /* .task-card-desc-toggle:hover {
     background: #c7d2fe;
 } */
+
+/* Thêm vào cuối file project_2.css */
+
+[data-theme="dark"] .btn-secondary {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text);
+}
+[data-theme="dark"] .btn-secondary:hover {
+    background-color: var(--color-border);
+}
+
+[data-theme="dark"] .btn-outline {
+    background-color: transparent;
+    border-color: var(--color-border-strong);
+    color: var(--color-text);
+}
+
+[data-theme="dark"] .btn-ghost {
+    color: var(--color-text-muted);
+}
+[data-theme="dark"] .btn-ghost:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text);
+}
+
+[data-theme="dark"] .task-card-desc {
+    color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .task-card-desc-label {
+    background: var(--color-primary-50);
+    color: var(--color-primary-300);
+}
+
+[data-theme="dark"] .task-card-desc-toggle {
+    color: var(--color-primary-300);
+}
+
+[data-theme="dark"] .task-list-row-header {
+    background-color: var(--color-surface);
+    color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .comment-bubble {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text);
+}
+
+/* =========================================================
+   COMPREHENSIVE DARK MODE OVERRIDES FOR ALL PROJECT PAGES
+   (ProjectBoard, ProjectOverview, ProjectList, ProjectCalendar, ProjectSetting)
+   ========================================================= */
+
+[data-theme="dark"] {
+    /* Ép tất cả các thẻ Card, Khung Bảng, Khung Lịch & Layout về màu tối */
+    .card,
+    .panel,
+    .modal-box,
+    .modal-content,
+    .modal-header,
+    .modal-body,
+    .modal-footer,
+    .backlog-table-wrap,
+    .calendar-card,
+    .calendar-cell,
+    .stagnation-card,
+    .settings-section,
+    .drawer-panel,
+    .chart-card,
+    .timeline-card,
+    .portfolio-matrix-wrapper {
+        background-color: var(--color-surface) !important;
+        color: var(--color-text) !important;
+        border-color: var(--color-border) !important;
+    }
+
+    /* Sửa tiêu đề bảng, Header hàng, Header lịch, Header cài đặt */
+    .backlog-table thead,
+    .stagnation-table th,
+    .member-table-header,
+    .calendar-weekdays,
+    .calendar-cell-head,
+    .task-list-row-header,
+    .timeline-head {
+        background-color: var(--color-surface-sunken) !important;
+        color: var(--color-text-muted) !important;
+        border-color: var(--color-border) !important;
+    }
+
+    /* Sửa các ô trong Bảng Backlog, Bảng Member, Bảng Stagnation */
+    .backlog-table td,
+    .backlog-table tr,
+    .stagnation-table td,
+    .stagnation-table tr,
+    .member-row,
+    .panel-row,
+    .timeline-row {
+        background-color: transparent !important;
+        color: var(--color-text) !important;
+        border-color: var(--color-border) !important;
+    }
+
+    /* Sửa màu chữ tiêu đề & văn bản bị đè màu tối */
+    h1, h2, h3, h4, h5, h6,
+    .member-name,
+    .calendar-month,
+    .calendar-day-num,
+    .section-title,
+    .chart-card-title,
+    .project-title,
+    .drawer-title-input {
+        color: var(--color-text) !important;
+    }
+
+    .member-email,
+    .section-subtitle,
+    .chart-card-subtitle,
+    .drawer-field-label,
+    .form-label,
+    .form-hint,
+    .calendar-weekdays > div {
+        color: var(--color-text-muted) !important;
+    }
+
+    /* Ô ngoài tháng trong lịch */
+    .calendar-cell.is-outside {
+        background-color: rgba(15, 23, 42, 0.6) !important;
+        opacity: 0.5;
+    }
+
+    /* Thẻ Task & Note nằm trên ô Lịch (ProjectCalendar) */
+    .calendar-cell-items > div {
+        background-color: var(--color-surface-hover) !important;
+        border-color: var(--color-primary-500, #6366f1) !important;
+        color: var(--color-text) !important;
+    }
+
+    .calendar-cell-items > div span {
+        color: var(--color-text) !important;
+    }
+
+    /* Tài liệu & Đính kèm (ProjectOverview) */
+    .document-list > div {
+        background-color: var(--color-surface-sunken) !important;
+        border-color: var(--color-border) !important;
+        color: var(--color-text) !important;
+    }
+
+    .document-list a {
+        color: #60a5fa !important; /* Màu xanh dịu cho Dark Mode */
+    }
+
+    /* Nền cho Menu điều hướng Tab Cài đặt (ProjectSetting) */
+    .settings-nav-item {
+        color: var(--color-text-muted) !important;
+    }
+
+    .settings-nav-item.active {
+        background-color: var(--color-surface-hover) !important;
+        color: var(--color-primary-400, #818cf8) !important;
+    }
+
+    /* Ô Nhập liệu (Input, Select, Textarea) trong Modal & Form */
+    .input,
+    .select,
+    .textarea,
+    .note-textarea {
+        background-color: var(--color-surface-sunken) !important;
+        color: var(--color-text) !important;
+        border-color: var(--color-border-strong) !important;
+    }
+
+    /* Sửa ô xem Timeline / Gantt chart */
+    .timeline-task-cell {
+        background-color: var(--color-surface) !important;
+        color: var(--color-text) !important;
+    }
+
+    /* Đảm bảo Tooltip biểu đồ hiển thị nền tối */
+    .chart-tooltip {
+        background-color: var(--color-surface) !important;
+        border: 1px solid var(--color-border) !important;
+        color: var(--color-text) !important;
+    }
+}
+
+/* =========================================================
+   DARK MODE ADJUSTMENTS FOR BADGES & TAGS
+   ========================================================= */
+
+[data-theme="dark"] {
+    /* 1. Các badge cơ bản (Role, Status, Column tag) */
+    .badge {
+        background-color: var(--color-surface-hover) !important;
+        color: var(--color-text) !important;
+        border-color: var(--color-border-strong) !important;
+    }
+
+    /* Badge thành công / Hoàn thành */
+    .badge-success {
+        background-color: rgba(22, 163, 74, 0.2) !important;
+        color: #4ade80 !important;
+        border: 1px solid rgba(74, 222, 128, 0.3) !important;
+    }
+
+    /* Badge cảnh báo / Tạm dừng */
+    .badge-warning {
+        background-color: rgba(217, 119, 6, 0.2) !important;
+        color: #facc15 !important;
+        border: 1px solid rgba(250, 204, 21, 0.3) !important;
+    }
+
+    /* 2. Nhãn trạng thái tiến độ task (On Track, Expiring, Overdue) */
+    /* On Track */
+    span[style*="background: #dcfce7"],
+    span[style*="background-color: #dcfce7"] {
+        background-color: rgba(22, 163, 74, 0.2) !important;
+        color: #4ade80 !important;
+        border-color: rgba(74, 222, 128, 0.3) !important;
+    }
+
+    /* Expiring */
+    span[style*="background: #fef3c7"],
+    span[style*="background-color: #fef3c7"] {
+        background-color: rgba(217, 119, 6, 0.2) !important;
+        color: #fcd34d !important;
+        border-color: rgba(252, 211, 77, 0.3) !important;
+    }
+
+    /* Overdue */
+    span[style*="background: #fee2e2"],
+    span[style*="background-color: #fee2e2"] {
+        background-color: rgba(220, 38, 38, 0.2) !important;
+        color: #fca5a5 !important;
+        border-color: rgba(252, 165, 165, 0.3) !important;
+    }
+
+    /* 3. Thẻ độ ưu tiên (Low, Medium, High, Urgent) */
+    .priority-tag,
+    .badge-priority-low,
+    .badge-priority-medium,
+    .badge-priority-high,
+    .badge-priority-urgent,
+    span[style*="background: #fffbeb"] {
+        background-color: rgba(245, 158, 11, 0.18) !important;
+        color: #fbbf24 !important;
+        border: 1px solid rgba(251, 191, 36, 0.25) !important;
+    }
+
+    /* 4. Thẻ chỉ số Tuần (Week Pill) trong Backlog / Board */
+    span[style*="background: #e0e7ff"],
+    span[style*="background-color: #e0e7ff"],
+    .task-card-desc-label {
+        background-color: rgba(99, 102, 241, 0.2) !important;
+        color: #a5b4fc !important;
+        border-color: rgba(165, 180, 252, 0.3) !important;
+    }
+
+    /* 5. Cột / Column Pill trong bảng Backlog */
+    span[style*="background: #f1f5f9"],
+    span[style*="background-color: #f1f5f9"] {
+        background-color: var(--color-surface-hover) !important;
+        color: var(--color-text-muted) !important;
+        border: 1px solid var(--color-border) !important;
+    }
+}
+
+/* =========================================================
+   FIX CHUYÊN SÂU CHO BADGE BỊ INLINE STYLE SÁNG TRONG PROJECTLIST
+   ========================================================= */
+
+[data-theme="dark"] {
+    /* 1. Badge Medium / Priority (gốc: background: #fffbeb) */
+    span[style*="#fffbeb"],
+    span[style*="rgb(255, 251, 235)"] {
+        background-color: rgba(245, 158, 11, 0.15) !important;
+        color: #fcd34d !important;
+        border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    }
+
+    /* 2. Badge Column (Review, Done, Todo) (gốc: background: #f1f5f9) */
+    span[style*="#f1f5f9"],
+    span[style*="rgb(241, 245, 249)"] {
+        background-color: rgba(51, 65, 85, 0.6) !important;
+        color: #cbd5e1 !important;
+        border: 1px solid rgba(71, 85, 105, 0.5) !important;
+    }
+
+    /* 3. Badge On Track (gốc: background: #dcfce7) */
+    span[style*="#dcfce7"],
+    span[style*="rgb(220, 252, 231)"] {
+        background-color: rgba(22, 163, 74, 0.15) !important;
+        color: #4ade80 !important;
+        border: 1px solid rgba(74, 222, 128, 0.3) !important;
+    }
+
+    /* 4. Badge Week (Week 1, Week 2...) (gốc: background: #e0e7ff) */
+    span[style*="#e0e7ff"],
+    span[style*="rgb(224, 231, 255)"] {
+        background-color: rgba(99, 102, 241, 0.18) !important;
+        color: #a5b4fc !important;
+        border: 1px solid rgba(165, 180, 252, 0.3) !important;
+    }
+
+    /* 5. Phòng ngừa cho Expiring & Overdue trong Backlog */
+    span[style*="#fef3c7"] {
+        background-color: rgba(217, 119, 6, 0.15) !important;
+        color: #fcd34d !important;
+        border: 1px solid rgba(252, 211, 77, 0.3) !important;
+    }
+
+    span[style*="#fee2e2"] {
+        background-color: rgba(220, 38, 38, 0.15) !important;
+        color: #fca5a5 !important;
+        border: 1px solid rgba(252, 165, 165, 0.3) !important;
+    }
+}
+
+/* =========================================================
+   FIX TRONG THÊM CHO OVERVIEW, SETTINGS & FILE INPUT
+   ========================================================= */
+
+[data-theme="dark"] {
+    /* 1. Nút "Choose File / Chọn tệp" ở Project Overview */
+    input[type="file"].input {
+        background-color: var(--color-surface-sunken) !important;
+        color: var(--color-text-muted) !important;
+        border-color: var(--color-border-strong) !important;
+    }
+
+    input[type="file"]::file-selector-button {
+        background-color: var(--color-surface-hover) !important;
+        color: var(--color-text) !important;
+        border: 1px solid var(--color-border-strong) !important;
+        border-radius: var(--radius-sm, 4px);
+        padding: 4px 10px;
+        cursor: pointer;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+        background-color: var(--color-border) !important;
+    }
+
+    /* 2. Khung chọn màu "Color" ở Project Setting */
+    input[type="color"] {
+        background-color: var(--color-surface-sunken) !important;
+        border-color: var(--color-border-strong) !important;
+    }
+
+    /* 3. Nút "Delete project" bị sáng ở Danger Zone (ProjectSetting) */
+    button[style*="background-color: rgb(254, 242, 242)"],
+    button[style*="background-color: #fef2f2"],
+    .settings-section .btn[style*="#fef2f2"] {
+        background-color: rgba(220, 38, 38, 0.15) !important;
+        color: #fca5a5 !important;
+        border-color: rgba(239, 68, 68, 0.4) !important;
+    }
+
+    button[style*="#fef2f2"]:hover {
+        background-color: rgba(220, 38, 38, 0.25) !important;
+    }
+
+    /* 4. Tag On Track & Các thẻ nhãn khác trong Overview / Milestone */
+    .milestone-tag,
+    .status-tag,
+    span[style*="#dcfce7"],
+    span[style*="rgb(220, 252, 231)"] {
+        background-color: rgba(22, 163, 74, 0.18) !important;
+        color: #4ade80 !important;
+        border: 1px solid rgba(74, 222, 128, 0.3) !important;
+    }
+}

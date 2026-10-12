@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import DropdownHeader from "./DropdownHeader/DropdownHeader";
-import { Menu, Bell } from "lucide-react";
+import { Menu, Bell, Moon, Sun } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { API_BASE_URL } from "../../../config/apiConfig.js";
 import { loadReadKeys, markRead, notificationKey, pruneReadKeys, unreadOf } from "../../../utils/notificationRead.js";
@@ -47,6 +47,22 @@ function Header({ onOpenSidebar, menuButtonRef, sidebarOpen = false }) {
     const dropdownRef = useRef(null);
     const userId = storedUserId();
     const [readKeys, setReadKeys] = useState(() => loadReadKeys(userId));
+
+    // Quản lý trạng thái theme
+    const [theme, setTheme] = useState(() => {
+        return localStorage.getItem("theme") ||
+            (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    });
+
+    // Đồng bộ theme lên html element [data-theme] và lưu localStorage
+    useEffect(() => {
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+    };
 
     // Fetch expiring tasks list from API with Project mapping
     const fetchExpiringTasks = async () => {
@@ -195,8 +211,19 @@ function Header({ onOpenSidebar, menuButtonRef, sidebarOpen = false }) {
                 </div>
             )}
 
-            {/* Right actions: Bell + Profile */}
+            {/* Right actions: Theme Toggle + Bell + Profile */}
             <div className="header-actions">
+                {/* Nút Toggle Sáng / Tối */}
+                <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={toggleTheme}
+                    aria-label={`Chuyển sang giao diện ${theme === "dark" ? "sáng" : "tối"}`}
+                    title={`Chuyển sang giao diện ${theme === "dark" ? "sáng" : "tối"}`}
+                >
+                    {theme === "dark" ? <Sun className="icon" /> : <Moon className="icon" />}
+                </button>
+
                 <div ref={dropdownRef} className="header-popover-anchor">
                     <button
                         type="button"
