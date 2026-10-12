@@ -27,4 +27,6 @@ userRouter.get('/:id', controller.getUserById);
 userRouter.post('/check-email',controller.CheckEmail);
 userRouter.post('/reset-password',controller.resetPassword);
 userRouter.put('/:id', emitOnSuccess("user_updated", (req) => ({ userId: str(req.params.id) })), controller.updateUser);
+
+userRouter.post("/send-otp", controller.sendOtp);
 module.exports = userRouter;

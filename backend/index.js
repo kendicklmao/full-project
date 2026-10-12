@@ -17,6 +17,9 @@ const { app } = require("./app");
 const config = require("./config/env");
 const connectDB = require("./config/db");
 
+// 💥 IMPORT JOB TẠI ĐÂY
+const { startNoteReminderJob } = require("./jobs/noteReminderJob");
+
 const server = http.createServer(app);
 
 // Khởi tạo Socket.IO hỗ trợ tất cả các nguồn
@@ -30,6 +33,9 @@ const startServer = async () => {
         await connectDB();
         server.listen(config.port, () => {
             console.log("Server is running on port " + config.port);
+
+            // 💥 KÍCH HOẠT CRON JOB TẠI ĐÂY SAU KHI SERVER CHẠY
+            startNoteReminderJob();
         });
     } catch (error) {
         console.log(error.message);

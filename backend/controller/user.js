@@ -9,16 +9,66 @@ const Task = require('./../model/task');
 const mongoose = require('mongoose');
 const mailer = require('./../helper/mailer');
 const passwordReset = require('./../helper/passwordReset');
+const { generateOtp, hashOtp, verifyOtpHash } = require('../helper/otp'); // Hoặc đúng đường dẫn chứa file otp.js của bạn
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+
+exports.sendOtp = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({ message: 'Please enter your email' });
+        }
+
+        const cleanEmail = email.trim().toLowerCase();
+
+        // Kiểm tra xem email đã tồn tại chưa
+        const existingUser = await User.findOne({ email: cleanEmail });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email is already registered' });
+        }
+
+        // Tạo mã OTP 6 chữ số
+        const otp = generateOtp();
+        const secret = process.env.OTP_SECRET || JWT_SECRET;
+
+        // Tạo chuỗi OTP Hash để trả về cho Frontend
+        const otpHash = hashOtp(cleanEmail, otp, secret);
+
+        // Gửi OTP qua email
+        await mailer.sendMail({
+            to: cleanEmail,
+            subject: 'Xác thực Email Đăng ký Tài khoản',
+            text: `Mã OTP xác thực tài khoản của bạn là: ${otp}. Mã này dùng để xác nhận email tồn tại.`
+        });
+
+        res.status(200).json({
+            message: 'OTP sent to your email',
+            otpHash
+        });
+    } catch (err) {
+        console.error('Error in sendOtp:', err);
+        res.status(500).json({ message: 'Could not send verification email' });
+    }
+};
+
 exports.register = async (req, res) => {
     try {
-        const { username, email, password, role } = req.body;
+        const { username, email, password, role, otp, otpHash } = req.body;
 
         const cleanEmail = email.trim().toLowerCase();
         const cleanUsername = username.trim();
 
+        // 1. Kiểm tra OTP nhập vào có khớp không
+        const secret = process.env.OTP_SECRET || JWT_SECRET;
+        const isValidOtp = verifyOtpHash(cleanEmail, otp, otpHash, secret);
+
+        if (!isValidOtp) {
+            return res.status(400).json({ message: 'Invalid or expired OTP' });
+        }
+
+        // 2. Kiểm tra lại Email hoặc Username tồn tại
         const existingUser = await User.findOne({
             $or: [{ email: cleanEmail }, { username: cleanUsername }]
         });
@@ -27,6 +77,7 @@ exports.register = async (req, res) => {
             return res.status(400).json({ message: 'Email or username not available' });
         }
 
+        // 3. Hash password và lưu User mới
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(password, salt);
 

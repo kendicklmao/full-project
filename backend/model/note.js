@@ -18,6 +18,10 @@ const noteSchema = new mongoose.Schema({
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    isNotified: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 
