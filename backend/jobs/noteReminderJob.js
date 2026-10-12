@@ -5,7 +5,7 @@ const mailer = require('../helper/mailer');  // Helper mailer sẵn có
 
 const startNoteReminderJob = () => {
     // Chạy định kỳ vào 07:00 sáng mỗi ngày ('0 7 * * *')
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('0 8 * * *', async () => {
         console.log('[Cron Job] Checking upcoming notes/reminders...');
 
         try {
