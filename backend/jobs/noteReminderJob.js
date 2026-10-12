@@ -1,31 +1,35 @@
 const cron = require('node-cron');
-const Note = require('../model/note');       // Đường dẫn tới Model Note của bạn
-const Member = require('../model/member');   // Đường dẫn tới Model Member của bạn
-const { sendMail } = require('../helper/mailer'); // Hàm sendMail từ helper/mailer.js
+const Note = require('../model/note');       // Model Note
+const Member = require('../model/member');   // Model Member
+const mailer = require('../helper/mailer');  // Helper mailer sẵn có
 
 const startNoteReminderJob = () => {
-    // Chạy định kỳ vào 08:00 sáng mỗi ngày ('0 8 * * *')
-    cron.schedule('0 8 * * *', async () => {
-        console.log('[Cron Job] Đang kiểm tra ghi chú (Notes) sắp đến hạn...');
+    // Chạy định kỳ vào 07:00 sáng mỗi ngày ('0 7 * * *')
+    cron.schedule('* * * * *', async () => {
+        console.log('[Cron Job] Checking upcoming notes/reminders...');
 
         try {
-            // 1. Tính ngày mai theo định dạng YYYY-MM-DD
+            // 1. Tính mốc ngày mai
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
 
             const year = tomorrow.getFullYear();
             const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
             const day = String(tomorrow.getDate()).padStart(2, '0');
-            const tomorrowStr = `${year}-${month}-${day}`;
 
-            // 2. Tìm các Note có date trùng với ngày mai và chưa gửi thông báo
+            const tomorrowStr = `${year}-${month}-${day}`;
+            const formattedDateStr = `${day}/${month}/${year}`; // Dạng DD/MM/YYYY cho nội dung mail
+
+            // 2. Lấy các Note có date là ngày mai và chưa gửi thông báo
             const notesToNotify = await Note.find({
                 date: tomorrowStr,
                 isNotified: { $ne: true }
             }).populate('projectId');
 
             for (const note of notesToNotify) {
-                // 3. Lấy danh sách email thành viên thuộc dự án chứa Note này
+                if (!note.projectId) continue;
+
+                // 3. Tìm email các thành viên trong dự án
                 const members = await Member.find({ projectId: note.projectId._id }).populate('userId');
                 const recipientEmails = members
                     .map(m => m.userId?.email)
@@ -34,20 +38,20 @@ const startNoteReminderJob = () => {
                 if (recipientEmails.length > 0) {
                     const projectName = note.projectId?.name || 'Project';
 
-                    // 4. Gửi email qua mailer
-                    await sendMail({
+                    // 4. Gửi mail bằng tiếng Anh kèm ngày tháng năm cụ thể
+                    await mailer.sendMail({
                         to: recipientEmails.join(','),
-                        subject: `[Nhắc hẹn] Ghi chú trong dự án "${projectName}" vào ngày mai!`,
-                        text: `Xin chào,\n\nBạn có một lịch hẹn/ghi chú trong dự án "${projectName}" sắp đến hạn vào ngày mai (${note.date}):\n\nNội dung: ${note.content}\n\nVui lòng kiểm tra trên lịch dự án.`
+                        subject: `[Reminder] Project note scheduled for tomorrow (${formattedDateStr}) in project "${projectName}"`,
+                        text: `Hello,\n\nYou have a scheduled note/event in the project "${projectName}" due tomorrow (${formattedDateStr}):\n\nNote Content: ${note.content}\n\nPlease check your project calendar for details.`
                     });
 
-                    // 5. Đánh dấu đã gửi mail nhắc hẹn thành công
+                    // 5. Đánh dấu đã gửi
                     note.isNotified = true;
                     await note.save();
                 }
             }
         } catch (error) {
-            console.error('[Cron Job] Lỗi khi gửi mail nhắc hẹn Note:', error);
+            console.error('[Cron Job] Error sending note reminder email:', error);
         }
     });
 };

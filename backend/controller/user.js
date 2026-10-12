@@ -39,8 +39,8 @@ exports.sendOtp = async (req, res) => {
         // Gửi OTP qua email
         await mailer.sendMail({
             to: cleanEmail,
-            subject: 'Xác thực Email Đăng ký Tài khoản',
-            text: `Mã OTP xác thực tài khoản của bạn là: ${otp}. Mã này dùng để xác nhận email tồn tại.`
+            subject: 'Confirm Email for registration',
+            text: `Your OTP for email verification is: ${otp}. This code is used to confirm your email exists.`
         });
 
         res.status(200).json({
