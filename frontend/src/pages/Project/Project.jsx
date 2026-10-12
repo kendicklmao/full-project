@@ -482,48 +482,40 @@ export default function Projects() {
                                                 <div className="project-card-progress-row">
                                                     {statsStatus === 'success' ? (
                                                         <span className="icon-inline">
-                                                            <ListChecks className="icon icon-sm" />
+            <ListChecks className="icon icon-sm" />
                                                             {totalTask} {totalTask === 1 ? 'task' : 'tasks'}
-                                                        </span>
+        </span>
                                                     ) : statsStatus === 'error' ? (
                                                         <span className="icon-inline project-stats-error" title="Couldn't load the task count">
-                                                            <ListChecks className="icon icon-sm" />
-                                                            <span aria-hidden="true">—</span>
-                                                            <span className="sr-only">Task count unavailable</span>
-                                                        </span>
+            <ListChecks className="icon icon-sm" />
+            <span aria-hidden="true">—</span>
+            <span className="sr-only">Task count unavailable</span>
+        </span>
                                                     ) : (
                                                         <span className="icon-inline project-stats-loading" role="status">
-                                                            <Loader2 className="icon icon-sm animate-spin" aria-hidden="true" />
-                                                            <span className="sr-only">Loading task count</span>
-                                                        </span>
+            <Loader2 className="icon icon-sm animate-spin" aria-hidden="true" />
+            <span className="sr-only">Loading task count</span>
+        </span>
                                                     )}
-                                                    <span style={{ fontWeight: 700, color: '#0f172a' }}>
-                                                        {progressValue === null ? '—' : `${progressPercent}%`}
-                                                    </span>
+
+                                                    {/* Số phần trăm */}
+                                                    <span className="project-progress-percent">
+        {progressValue === null ? '—' : `${progressPercent}%`}
+    </span>
                                                 </div>
 
-                                                <div
-                                                    style={{
-                                                        width: '100%',
-                                                        height: '10px',
-                                                        backgroundColor: '#e2e8f0',
-                                                        borderRadius: '999px',
-                                                        overflow: 'hidden',
-                                                        marginTop: '8px'
-                                                    }}
-                                                >
+                                                {/* Thanh Progress Track & Fill */}
+                                                <div className="project-progress-track">
                                                     <div
+                                                        className="project-progress-fill"
                                                         style={{
                                                             width: `${progressPercent}%`,
-                                                            height: '100%',
                                                             backgroundColor: progressPercent === 100
-                                                                ? '#10b981'
+                                                                ? 'var(--progress-success, #10b981)'
                                                                 : progressPercent >= 50
-                                                                    ? '#3b82f6'
-                                                                    : '#f59e0b',
-                                                            borderRadius: '999px',
-                                                            transition: 'width 0.4s ease-in-out',
-                                                            boxShadow: progressPercent > 0 ? '0 0 8px rgba(59, 130, 246, 0.5)' : 'none'
+                                                                    ? 'var(--progress-info, #3b82f6)'
+                                                                    : 'var(--progress-warning, #f59e0b)',
+                                                            boxShadow: progressPercent > 0 ? 'var(--progress-glow)' : 'none'
                                                         }}
                                                     />
                                                 </div>

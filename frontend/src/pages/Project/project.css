@@ -956,3 +956,92 @@ svg {
         border: 1px solid rgba(74, 222, 128, 0.3) !important;
     }
 }
+
+/* Trạng thái On Track mặc định (Light Mode) */
+.task-card-signal.is-ontrack {
+    color: #15803d;             /* Màu chữ xanh lá */
+    background-color: #f0fdf4;  /* Nền xanh lá nhạt */
+    border: 1px solid #bbf7d0;  /* Viền xanh lá nhạt */
+}
+
+/* --- CHỈNH SỬA CHO GIAO DIỆN TỐI (DARK MODE) --- */
+
+/* Trường hợp 1: Sử dụng class .dark hoặc thuộc tính data-theme="dark" trên <html> / <body> */
+[data-theme="dark"] .task-card-signal.is-ontrack,
+.dark .task-card-signal.is-ontrack {
+    color: #4ade80;              /* Chữ xanh lá sáng, dễ đọc trên nền tối */
+    background-color: rgba(34, 197, 94, 0.15); /* Nền xanh nhạt trong suốt */
+    border-color: rgba(74, 222, 128, 0.3);      /* Viền viền sáng nhẹ */
+}
+
+/* Trường hợp 2: Tự động theo chế độ tối của Hệ điều hành / Trình duyệt */
+@media (prefers-color-scheme: dark) {
+    .task-card-signal.is-ontrack {
+        color: #4ade80;
+        background-color: rgba(34, 197, 94, 0.15);
+        border-color: rgba(74, 222, 128, 0.3);
+    }
+}
+
+/* ===================================================
+   CẤU HÌNH BIẾN MÀU (CSS VARIABLES)
+   =================================================== */
+
+/* --- 1. MẶC ĐỊNH: LIGHT MODE (GIAO DIỆN SÁNG) --- */
+:root {
+    --progress-percent-color: #0f172a;       /* Màu chữ % đậm, dễ đọc */
+    --progress-track-bg: #e2e8f0;            /* Nền thanh track xám nhạt */
+    --progress-success: #10b981;             /* Màu xanh lá cho 100% */
+    --progress-info: #3b82f6;                /* Màu xanh dương cho >= 50% */
+    --progress-warning: #f59e0b;             /* Màu cam cho < 50% */
+    --progress-glow: 0 0 8px rgba(59, 130, 246, 0.4); /* Hiệu ứng phát sáng nhẹ */
+}
+
+/* --- 2. DARK MODE (GIAO DIỆN TỐI) --- */
+[data-theme="dark"],
+.dark {
+    --progress-percent-color: #f8fafc;       /* Màu chữ % trắng sáng */
+    --progress-track-bg: #334155;            /* Nền thanh track xám tối */
+    --progress-success: #34d399;             /* Màu xanh lá dịu sáng */
+    --progress-info: #60a5fa;                /* Màu xanh dương tươi */
+    --progress-warning: #fbbf24;             /* Màu vàng cam sáng */
+    --progress-glow: 0 0 10px rgba(96, 165, 250, 0.5); /* Hiệu ứng sáng nổi bật */
+}
+
+/* Tự động theo chế độ tối của Hệ điều hành / Trình duyệt (nếu không dùng class .dark) */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --progress-percent-color: #f8fafc;
+        --progress-track-bg: #334155;
+        --progress-success: #34d399;
+        --progress-info: #60a5fa;
+        --progress-warning: #fbbf24;
+        --progress-glow: 0 0 10px rgba(96, 165, 250, 0.5);
+    }
+}
+
+/* ===================================================
+   STYLES CHO PROGRESS BAR & %
+   =================================================== */
+
+.project-progress-percent {
+    font-weight: 700;
+    color: var(--progress-percent-color);
+    transition: color 0.3s ease;
+}
+
+.project-progress-track {
+    width: 100%;
+    height: 10px;
+    background-color: var(--progress-track-bg);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.project-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease-in-out, background-color 0.3s ease;
+}
