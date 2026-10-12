@@ -50,7 +50,13 @@ function DropdownHeader() {
     }, [isOpen]);
 
     const handleLogout = () => {
-        localStorage.clear(); // Xóa sạch dữ liệu đăng nhập cũ
+        // Xóa thông tin phiên làm việc của user, giữ nguyên theme và các cấu hình khác
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+
+        // Nếu có lưu token riêng biệt, bạn có thể bỏ comment dòng bên dưới:
+        // localStorage.removeItem("token");
+
         navigate("/login");
     };
 

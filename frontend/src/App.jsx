@@ -31,6 +31,12 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    useEffect(() => {
+        // Lấy theme từ localStorage (mặc định là 'light' nếu chưa có)
+        const savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+    }, []);
+
     // one shared socket: (re)connect after login, drop it after logout
     useEffect(() => {
         syncSocketConnection();
