@@ -17,6 +17,7 @@ function Register() {
   });
 
   const [otpHash, setOtpHash] = useState("");
+  const [expiresAt, setExpiresAt] = useState(null); // State lưu thời gian hết hạn OTP (1 phút)
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
@@ -58,6 +59,7 @@ function Register() {
 
       if (res.ok) {
         setOtpHash(data.otpHash);
+        setExpiresAt(data.expiresAt); // Lưu expiresAt từ response của server
         setIsOtpSent(true);
         setCountdown(60); // Đếm ngược 60s
         notify({ type: "success", title: "OTP sent to your email!" });
@@ -91,7 +93,8 @@ function Register() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          otpHash // Truyền otpHash để backend xác thực
+          otpHash,   // Gửi otpHash xác thực
+          expiresAt  // Gửi thời gian hết hạn sang Backend
         })
       });
       const data = await res.json();
@@ -109,14 +112,14 @@ function Register() {
   return (
       <div className="auth-wrap size-lg">
         <div className="auth-brand-row">
-          <span className="icon icon-xl auth-logo" data-icon="kanbanSquare">
-            <svg viewBox="0 0 24 24">
-              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
-              <path d="M8 7v7"></path>
-              <path d="M12 7v4"></path>
-              <path d="M16 7v9"></path>
-            </svg>
-          </span>
+        <span className="icon icon-xl auth-logo" data-icon="kanbanSquare">
+          <svg viewBox="0 0 24 24">
+            <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+            <path d="M8 7v7"></path>
+            <path d="M12 7v4"></path>
+            <path d="M16 7v9"></path>
+          </svg>
+        </span>
           <div>
             <h1>Create your account</h1>
             <p className="page-subtitle">It only takes a minute to get started with TeamFlow.</p>
@@ -201,9 +204,9 @@ function Register() {
                     className="password-toggle-btn icon-btn icon-btn-sm"
                     onClick={() => setShowPassword(!showPassword)}
                 >
-                  <span className="icon icon-sm">
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </span>
+                <span className="icon icon-sm">
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </span>
                 </button>
               </div>
             </div>
@@ -228,9 +231,9 @@ function Register() {
                     className="password-toggle-btn icon-btn icon-btn-sm"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  <span className="icon icon-sm">
-                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </span>
+                <span className="icon icon-sm">
+                  {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </span>
                 </button>
               </div>
             </div>

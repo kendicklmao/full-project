@@ -9,10 +9,9 @@ const Task = require('./../model/task');
 const mongoose = require('mongoose');
 const mailer = require('./../helper/mailer');
 const passwordReset = require('./../helper/passwordReset');
-const { generateOtp, hashOtp, verifyOtpHash } = require('../helper/otp'); // Hoặc đúng đường dẫn chứa file otp.js của bạn
+const { generateOtp, hashOtp, createOtpPayload, verifyOtpHash } = require('../helper/otp');
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
 
 exports.sendOtp = async (req, res) => {
     try {
@@ -29,43 +28,52 @@ exports.sendOtp = async (req, res) => {
             return res.status(400).json({ message: 'Email is already registered' });
         }
 
-        // Tạo mã OTP 6 chữ số
-        const otp = generateOtp();
-        const secret = process.env.OTP_SECRET || JWT_SECRET;
+        // Lấy secret key
+        const secret = process.env.OTP_SECRET || JWT_SECRET || 'fallback_secret_key';
 
-        // Tạo chuỗi OTP Hash để trả về cho Frontend
-        const otpHash = hashOtp(cleanEmail, otp, secret);
+        // Tạo OTP Hash + expiresAt (1 phút)
+        const { otp, hash: otpHash, expiresAt } = createOtpPayload(cleanEmail, secret);
 
         // Gửi OTP qua email
         await mailer.sendMail({
             to: cleanEmail,
             subject: 'Confirm Email for registration',
-            text: `Your OTP for email verification is: ${otp}. This code is used to confirm your email exists.`
+            text: `Your OTP for email verification is: ${otp}. This code expires in 1 minute.`
         });
 
         res.status(200).json({
             message: 'OTP sent to your email',
-            otpHash
+            otpHash,
+            expiresAt
         });
     } catch (err) {
         console.error('Error in sendOtp:', err);
-        res.status(500).json({ message: 'Could not send verification email' });
+        // Trả thêm err.message để debug trực tiếp từ response nếu có lỗi mail
+        res.status(500).json({
+            message: 'Could not send verification email',
+            error: err.message
+        });
     }
 };
 
 exports.register = async (req, res) => {
     try {
-        const { username, email, password, role, otp, otpHash } = req.body;
+        // ✅ ĐÃ SỬA: Lấy đủ otp, otpHash, expiresAt từ req.body
+        const { username, email, password, role, otp, otpHash, expiresAt } = req.body;
+
+        if (!email || !otp || !otpHash || !expiresAt) {
+            return res.status(400).json({ message: 'Missing required OTP verification data' });
+        }
 
         const cleanEmail = email.trim().toLowerCase();
         const cleanUsername = username.trim();
 
-        // 1. Kiểm tra OTP nhập vào có khớp không
-        const secret = process.env.OTP_SECRET || JWT_SECRET;
-        const isValidOtp = verifyOtpHash(cleanEmail, otp, otpHash, secret);
+        // 1. Kiểm tra OTP nhập vào có khớp và còn hạn 1 phút không
+        const secret = process.env.OTP_SECRET || JWT_SECRET || 'fallback_secret_key';
+        const isValid = verifyOtpHash(cleanEmail, String(otp), Number(expiresAt), otpHash, secret);
 
-        if (!isValidOtp) {
-            return res.status(400).json({ message: 'Invalid or expired OTP' });
+        if (!isValid) {
+            return res.status(400).json({ message: 'Invalid or expired OTP (must be within 1 minute)' });
         }
 
         // 2. Kiểm tra lại Email hoặc Username tồn tại
@@ -97,7 +105,6 @@ exports.register = async (req, res) => {
     }
 };
 
-
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -114,7 +121,7 @@ exports.login = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: 'email or password not available' });
         }
-           
+
         const token = jwt.sign(
             { id: user._id, role: user.role },
             JWT_SECRET,
@@ -137,6 +144,7 @@ exports.login = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
 exports.GetCurrentUser = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
@@ -146,7 +154,7 @@ exports.GetCurrentUser = async (req, res) => {
         const memberInfor = await Member.findOne({ userId: user._id });
 
         return res.status(200).json({
-            user, // Trả về đầy đủ thông tin user bao gồm cả `point`
+            user,
             userRole: user.role,
             memberRole: memberInfor ? memberInfor.role : null
         });
@@ -203,7 +211,6 @@ exports.updateUser = async (req, res) => {
             }
         }
 
-        // XỬ LÝ STATUS AN TOÀN
         if (status !== undefined && status !== null) {
             const cleanStatus = status.toString().trim();
             if (cleanStatus !== currentUser.status) {
@@ -255,7 +262,6 @@ exports.updateUser = async (req, res) => {
             { new: true, runValidators: true }
         ).select('-password');
 
-        // BẮN SỰ KIỆN SOCKET AN TOÀN KHI BAN USER
         if (updatedUser.status === "Inactive") {
             try {
                 emitToApp("user_banned", { userId: updatedUser._id.toString() });
@@ -295,7 +301,6 @@ exports.deleteUser = async (req, res) => {
 
             if (columnIds.length > 0) {
                 await Task.deleteMany({ columnId: { $in: columnIds } });
-
                 await Column.deleteMany({ projectId: { $in: projectIds } });
             }
 
@@ -310,27 +315,27 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
-exports.CheckEmail =async (req,res) =>{
+exports.CheckEmail = async (req, res) => {
     try {
-        const {email}= req.body;
-        if(!email){
+        const { email } = req.body;
+        if (!email) {
             return res.status(400).json({ message: 'Please enter your email address' });
         }
-        const user = await User.findOne({email :email});
-        if(!user){
+        const user = await User.findOne({ email });
+        if (!user) {
             return res.status(404).json({ message: 'Email address not found in the system' });
         }
         return res.status(200).json({
-            message:'Email verifield successfully',
-            userId :user._id
-        })
+            message: 'Email verified successfully',
+            userId: user._id
+        });
     } catch (error) {
-         console.error("Lỗi forgotPassword:", err);
-        return res.status(500).json({ error: err.message });
+        // ✅ ĐÃ SỬA: Sửa err -> error
+        console.error("Lỗi CheckEmail:", error);
+        return res.status(500).json({ error: error.message });
     }
-}
-// The former POST /user/reset-password changed ANY account's password from just an email (no proof of ownership).
-// It is retired in favour of the OTP flow below.
+};
+
 exports.resetPassword = (req, res) =>
     res.status(410).json({ message: 'This endpoint was removed. Use POST /api/user/forgot-password/request and /verify.' });
 
@@ -342,18 +347,16 @@ const passwordDeps = () => ({
     secret: process.env.OTP_SECRET || JWT_SECRET,
 });
 
-// POST /api/user/forgot-password/request { email } (public)
 exports.requestPasswordOtp = async (req, res) => {
     try {
         const result = await passwordReset.requestOtp(req.body || {}, passwordDeps());
         return res.status(result.status).json(result.body);
     } catch (err) {
-        console.error('requestPasswordOtp failed:', err.message); // never log the code or the email body
+        console.error('requestPasswordOtp failed:', err.message);
         return res.status(502).json({ message: 'The verification email could not be sent. Please try again later.' });
     }
 };
 
-// POST /api/user/forgot-password/verify { email, otp, newPassword } (public)
 exports.verifyPasswordOtp = async (req, res) => {
     try {
         const result = await passwordReset.verifyOtpAndReset(req.body || {}, passwordDeps());
@@ -364,7 +367,6 @@ exports.verifyPasswordOtp = async (req, res) => {
     }
 };
 
-// POST /api/user/change-password { currentPassword, newPassword } [JWT]
 exports.changePassword = async (req, res) => {
     try {
         const result = await passwordReset.changePassword(
