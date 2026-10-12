@@ -829,3 +829,24 @@ body {
   -webkit-text-fill-color: var(--text-primary) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+/* 1. Đặt color-scheme cho Dark Mode để trình duyệt tự hiểu nền tối */
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* 2. Sửa màu khi bôi đen / chọn chữ (Selection) */
+[data-theme="dark"] input::selection {
+  background-color: #374151 !important; /* Màu nền khi bôi đen */
+  color: #ffffff !important;            /* Màu chữ khi bôi đen */
+}
+
+/* 3. Đè hoàn toàn màu chữ và nền Autofill/Autocomplete của Chrome & Edge */
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--input-bg, #0f172a) inset !important;
+  -webkit-text-fill-color: var(--text-primary, #ffffff) !important;
+  caret-color: var(--text-primary, #ffffff) !important;
+}
