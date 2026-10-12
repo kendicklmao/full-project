@@ -59,7 +59,7 @@ async function requestOtp({ email: rawEmail }, deps) {
         await sendMail({
             to: email,
             subject: 'Your TeamFlow password reset code',
-            text: `Your verification code is ${otp}. It expires in ${Math.round(OTP_TTL_MS / 1000)} seconds. If you did not request it, ignore this email.`,
+            text: `Your verification code is ${otp}. It expires in 1 minute. If you did not request it, ignore this email.`,
         });
     } catch (err) {
         // the code could not be delivered: drop it so the user can retry immediately
