@@ -102,6 +102,11 @@ async function verifyOtpAndReset({ email: rawEmail, otp, newPassword }, deps) {
         await PasswordReset.deleteOne({ email });
         return invalid;
     }
+    // Checked only after the code is proven valid, so it reveals nothing to someone without the code.
+    // The code is kept, so the user can retry with a different password.
+    if (await bcrypt.compare(newPassword, user.password)) {
+        return { status: 400, body: { message: 'The new password must be different from the old password.' } };
+    }
     const hashed = await bcrypt.hash(newPassword, await bcrypt.genSalt(10));
     await User.findByIdAndUpdate(user._id, { password: hashed });
     await PasswordReset.deleteOne({ email }); // single use
